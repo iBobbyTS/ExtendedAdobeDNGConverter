@@ -1,0 +1,80 @@
+key,lang-en,lang-zh-cn
+lang-en,English,英语
+lang-zh-cn,Chinese,中文
+title,Extended Adobee DNG Converter,扩展 Adobee DNG 转换器
+language_description,Select language,选择语言
+adc_button,Adobe DNG Converter,Adobe DNG 转换器
+adc_website_button,Adobe DNG Converter Website,Adobe DNG 转换器官网
+download_adc_mac,Download directly,直接下载
+download_adc_windows_x64,Download x64 version,下载 x64 版
+download_adc_windows_arm,Download ARM version,下载 ARM 版
+input_label,Input,输入
+open_file,Open file,打开文件
+or_text_label,or,或
+open_folder,Open folder,打开文件夹
+output_folder_label,Output folder,输出文件夹
+compression_type_label,Compression type,压缩类型
+uncompressed,Uncompressed,未压缩
+lossless,Lossless,无损压缩
+lossy,Lossy,有损压缩
+compression_algorithm_label,Compression algorithm,压缩算法
+compression_quality_label,compression quality,压缩质量
+compression_quality_slider_left_text,High Quality,高质量
+compression_quality_slider_right_text,Low quality,低质量
+compression_effort_label,Compression effort,压缩率
+compression_effort_slider_left_text,Fast,快
+compression_effort_slider_right_text,Slow,慢
+resize_label,Limit size,缩小
+none,None,无
+limit_input_by_side,Limit by long side,限制长边像素数
+limit_input_by_pixel_count,Limit by pixel count,限制像素数
+debayer_label,Debayer,解拜耳
+jpeg_preview_label,JPEG preview,JPEG 预览
+medium_size,Medium size,中等尺寸
+full_size,Full size,全尺寸
+fast_load_data_label,Fast load data,快速加载数据
+embed_original_raw_label,Embed original RAW,嵌入原始RAW
+camera_raw_compatibility_label,Camera RAW compatibility,相机RAW兼容性
+dng_version_label,DNG version,DNG 版本
+parallel_processing_label,Parallel processing,并行处理
+clear_log_button,Clear log,清除日志
+start_button,Start Converting,开始转换
+stop_button,Stop Converting,停止转换
+compression_type_description,"Ps. bracket indicates an 16-bit 24MP RGB RAW image.\nUsage: Uncompressed(137M) for research purpose, lossless(40-60M) for high quality archive, see lossy(1-25M) descriptions in JXL compression quality tooltip",注：括号内是16位2400万像素RGB RAW照片的占用空间。\n用途：未压缩(137M)仅用于研究目的，无损压缩(40-60M)用于高质量存档，有损压缩(1-25M)请查看JXL压缩质量帮助信息
+compression_algorithm_description,"Ps. bracket indicates an 16-bit 24MP RGB RAW image.\nJPEG(70-90M) doesn't support lossy compression, it's for old RAW processing software that doesn't support JXL, tryout JXL for smaller file size in both lossless(40-60M) and lossy(1-25M) compression",注：括号内是16位2400万像素RGB RAW照片的占用空间。\nJPEG(70-90M)不支持有损压缩，适用于不支持JXL的旧RAW处理软件；推荐使用JXL以获得更小的文件，同时支持无损（40-60M）和有损压缩（1-25M）。
+compression_quality_description,"Ps. bracket indicates an 16-bit 24MP RGB RAW image.\nADC's default is 1 (1-7M), 0.1 (15-25M) is my recommendation, it gives very high quality, 0 is lossless, please set to lossless(40-60M) with Compression type above.\nThis is the --distance parameter in libjxl",注：括号内是16位2400万像素RGB RAW照片的占用空间。\nADC的默认值是1（1-7M），0.1（15-25M）是我的推荐压缩质量，输出文件有非常高的画质，0是无损(40-60M)，请使用压缩类型来将图像设置为无损。\n这是libjxl中的--distance参数。
+compression_effort_description,"Ps. bracket indicates an 16-bit 24MP RGB RAW image.\n1(70-80M) is fast with larger output file size, 9(40-60M) is slow with smaller output file size. Does not affect image quality.\nThis is the --effort parameter in libjxl",注：括号内是16位2400万像素RGB RAW照片的占用空间。\n此选项不影响画质。\n1（70-80M）压缩很快，压缩完文件较大，9（40-60M）压缩较慢，压缩完文件较小。\n这是libjxl中的--effort参数。
+resize_description,Limit size is only supported in lossy compression.,缩小图像仅支持有损压缩。
+debayer_description,"Assuming you know what bayer and debayer means, otherwise leave it off.\nOnly applies to bayer image, even this option is off, it will not rebayer image if input is RGB(most raw-level noise reduction, hdr, panorama, etc. will debayer image).",假设您知道拜耳阵列和解拜耳，否则请关闭此选项。\n仅对拜耳图像有效，即使关闭此选项，如果输入是RGB，它也不会重组拜耳阵列（大部分RAW级别的降噪、包围曝光、全景接片都会先把图像解拜耳）。
+jpeg_preview_description,This is a preview of the image for non-raw processing software to display the image,JPEG预览让非RAW处理软件可以显示图像。
+fast_load_data_description,"This adds a smaller raw image to the output dng file, it helps raw processing software to render a low resolution image faster",在输出的DNG文件中添加一个低分辨率RAW图像，有助于RAW处理软件快速渲染出一个低分辨率图像。
+embed_original_raw_description,"This embeds the original RAW file into the output DNG file, you can extract the original RAW file with the official Adobe DNG Converter(not this one).",这会把原始RAW文件嵌入到输出的DNG文件中，您可以使用官方的Adobe DNG转换器提取原始RAW文件。
+camera_raw_compatibility_description,Camera RAW Compatibility,Camera RAW兼容性
+dng_version_description,JXL requires DNG version >= 1.7,JXL要求DNG版本>=1.7
+parallel_processing_description,Process multiple raw files in parallel(Not recommended, unless cpu usage is low),同时处理多个RAW文件（不推荐开启，除非CPU使用率很低）
+refresh_adc_button,I have installed Adobe DNG Converter,已完成安装 Adobe DNG 转换器
+log_set_to_uncompressed,Compression parameters are hidden.,已隐藏压缩参数。
+log_set_to_compressed,Compression parameters are shown.,已显示压缩参数。
+log_show_resize,"Limit size is shown.",已显示缩小图像参数。
+log_set_to_jxl_due_to_lossy,Compression algorithm is set to JXL (JPEG doesn't support lossy),压缩算法设置为JXL（JPEG不支持有损压缩）
+log_hide_resize_due_to_lossy,Limit size is hidden (it's only supported in lossy compression),已隐藏缩小图像参数（仅有损压缩支持缩小图像）
+log_show_compression_parameters_due_to_jxl,JXL compression parameters are shown,JXL压缩参数已显示
+log_set_dng_version_to_1_7_due_to_jxl,DNG version is set to 1.7 (JXL compression requires DNG Version >=1.7),DNG版本设置为1.7（JXL压缩要求DNG版本>=1.7）
+log_hide_compression_quality_due_to_jxl,JXL compression quality slider is hidden since the compressio type is lossless,JXL压缩质量滑块已隐藏，因为压缩类型是无损
+log_show_compression_quality_due_to_jxl,JXL compression quality slider is shown,JXL压缩质量滑块已显示
+log_hide_compression_quality_due_to_lossless,Compression quality slider is hidden since the compressio type is lossless,压缩质量滑块已隐藏，因为压缩类型是无损
+log_show_compression_quality_due_to_lossy,Compression quality slider is shown,压缩质量滑块已显示
+log_hide_compression_parameters_due_to_jpeg,JXL compression parameters are hidden (JPEG doesn't have parameters),已隐藏JXL压缩参数（JPEG无压缩参数）
+log_set_to_lossless_due_to_jpeg,Compression type is set to lossless (JPEG doesn't support lossless),压缩类型设置为无损（JPEG不支持无损压缩）
+log_set_quality_to_0,JXL compression quality is set to 0 (quality must be between 0 and 6),JXL压缩质量已设置为0（质量必须在0和6之间）
+log_set_quality_to_6,JXL compression quality is set to 6 (quality must be between 0 and 6),JXL压缩质量已设置为6（质量必须在0和6之间）
+log_quality_value_error,"JXL quality {ecv} is invalid, it must be a number between 0 and 6, it's defaulted to 0.1",JXL质量{ecv}无效，必须是0和6之间的数，已设置为默认值0.1
+log_set_effort_to_1,JXL compression effort is set to 1 (effort must be between 1 and 9),JXL压缩率已设置为1（压缩率必须在1和9之间）
+log_set_effort_to_9,JXL compression effort is set to 9 (effort must be between 1 and 9),JXL压缩率已设置为9（压缩率必须在1和9之间）
+log_effort_value_error,"JXL effort {ecv} is invalid, it must be a number between 1 and 9, it's defaulted to 9",JXL压缩率{ecv}无效，必须是1和9之间的数，已设置为默认值9
+log_set_debayer_to_true_due_to_debayer_self,"Debayer is must be on when using lossy compression, please change to lossless or uncompressed first",解拜耳仅支持有损压缩，请先将压缩类型设置为无损压缩或未压缩
+log_set_dng_version_to_1_7_due_to_self,"JXL requires DNG Version >=1.7, please change compression algorithm before setting DNG version < 1.7",JXL要求DNG版本>=1.7，请更改压缩算法后再设置低于1.7的DNG版本
+log_adobe_dng_converter_not_found,"This application is an alternative graphics interface of Adobe DNG Converter(ADC), it requires ADC to be installed to its default location ({dir}) on the system to work, click the button on top right of the window to open ADC website",这个软件是为Adobe DNG转换器(ADC)重新开发的图形界面，不能独立使用，需要先把ADC安装到默认路径（{dir}），点击窗口右上角的按钮打开ADC
+log_adobe_dng_converter_found,"This application is an alternative graphics interface of Adobe DNG Converter(ADC), it requires ADC to be installed on the system to work, if you have any problem converting, consider updating ADC first, click the button on top right of the window to open ADC website directly",这个软件是为Adobe DNG转换器(简称ADC)重新开发的图形界面，不能独立使用，需要先把ADC安装到默认路径（{dir}），如果您在转换时遇到任何问题，请先更新ADC，可以点击窗口右上角的按钮打开ADC网站
+log_adobe_dng_converter_still_not_found,"Adobe DNG Converter is still not found, please make sure it's installed to {dir}",Adobe DNG转换器仍未找到，请确保已安装到{dir}
+log_adobe_dng_converter_found_thank_you,"Adobe DNG Converter is found, you can now use this application",已找到Adobe DNG转换器，可以开始使用啦
