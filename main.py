@@ -206,6 +206,7 @@ def update_language(page):
             control_adc_menu.items[1].text = lang['download_adc_windows_x64']
     else:
         control_adc_menu.items[1].text = lang['download_adc_mac']
+    control_darkmode_selector.tooltip.message = lang['darkmode_description']
     # 控件
     # 输入
     control_input_label.value = lang["input_label"]
@@ -313,6 +314,9 @@ def update_language(page):
     control_parallel_processing_description.tooltip.message = lang["parallel_processing_description"]
     # 右侧日志
     # 清除日志按钮
+    control_log_error_warning_description.tooltip.message = lang["log_error_warning_description"] + (lang['log_error_warning_description_windows_specific'] if sys_win else '')
+    control_log_error.label = lang["log_error"]
+    control_log_warning.label = lang["log_warning"]
     control_clear_log_button.text = lang["clear_log_button"]
     # 已禁用组件的说明
     update_disabled_tooltip()
@@ -855,10 +859,16 @@ def start_processing(e):
     index_format = re.findall(r"%\(\d+,\d+\)d", output_file_format)
     if index_format:
         index_format = index_format[0]
-    index = 0
+    file_numbering_index = 0
     if index_format_parm:
         index_format_parm = [int(i) for i in index_format_parm[0]]
-        index = index_format_parm[1]
+        file_numbering_index = index_format_parm[1]
+    file_count = 0
+    for root, _, file_list in files:
+        for f in file_list:
+            if f.endswith(RAW_EXTENSIONS):
+                file_count += 1
+    process_count = 0
     for root, _, file_list in files:
         subfolder_name = root.removeprefix(input_path).removeprefix('/')
         output_folder = os.path.join(output_path, subfolder_name)
@@ -874,7 +884,7 @@ def start_processing(e):
             name, _ = os.path.splitext(file)
             output_file_name = output_file_format.replace('%F', name).replace('%f', name.lower())
             if index_format:
-                output_file_name = output_file_name.replace(index_format, f'{index:0{index_format_parm[0]}d}')
+                output_file_name = output_file_name.replace(index_format, f'{file_numbering_index:0{index_format_parm[0]}d}')
             input_file_capture_time = get_capture_time_of_raw_file(input_file)
             output_file_name = input_file_capture_time.strftime(output_file_name)
             output_file_name = output_file_name + ext
@@ -882,17 +892,24 @@ def start_processing(e):
             if os.path.exists(output_file_path) and skip_existing:
                 add_to_log(e, f"{output_file_path} exists, skipping")
                 continue
-            index += 1
+            file_numbering_index += 1
             _ = args+['-d', output_folder, '-o', output_file_name, input_file]
             add_to_log(e, 'Processing '+output_file_name, True)
             process = subprocess.Popen(_, stderr=subprocess.PIPE, text=True, shell=False)
             for line in process.stderr:
                 if line.startswith('***') and line.endswith('***'):
-                    add_to_log(e, line, True)
-                    control_log_text.page.update()
+                    if control_log_error.value and 'Error' in line:
+                        add_to_log(e, line, False)
+                        control_log_text.page.update()
+                    elif control_log_warning.value and 'Warning' in line:
+                        add_to_log(e, line, False)
+                        control_log_text.page.update()
                 else:
                     add_to_log(e, line, True)
                     control_log_text.page.update()
+            process_count += 1
+            control_progress_text.value = f'{process_count}/{file_count}'
+            control_progress_bar.value = process_count/file_count
         if break_process:
             break_process = False
             break
@@ -954,7 +971,7 @@ def main(page):
     global welcome_text_key, disables, log_count
     # AppBar
     global ctrl_language_selector
-    global control_adc_website_button, control_adc_menu
+    global control_adc_website_button, control_adc_menu, control_darkmode_selector
     # 输入文件
     global control_input_label, control_selected_file_text, control_or_text_label, control_open_folder_button, control_open_file_button, control_include_subfolder_checkbox, control_skip_existing_checkbox
     # 输出文件
@@ -999,13 +1016,13 @@ def main(page):
     # 清除日志按钮
     global control_clear_log_button
     # 日志
-    global control_progress_text, control_progress_bar, control_log_text, control_log_scroll_column
+    global control_progress_text, control_progress_bar, control_log_text, control_log_scroll_column, control_log_error_warning_description, control_log_error, control_log_warning
 
     # 窗口
-    page.window.width = 1200
+    page.window.width = 1250
     page.window.height = 1000
     page.window.min_height = 400  # 设置窗口最小高度为400像素
-    page.window.min_width = 1030  # 设置窗口最小高度为400像素
+    page.window.min_width = 1215  # 设置窗口最小高度为400像素
     page.window.top = 0
     page.window.left = 0
 
@@ -1043,7 +1060,7 @@ def main(page):
         tooltip=ft.Tooltip(''),
     )
     # 深色模式
-    darkmode_selector = ft.PopupMenuButton(
+    control_darkmode_selector = ft.PopupMenuButton(
         icon=ft.Icons.DARK_MODE_OUTLINED,
         items=[
             ft.PopupMenuItem(text="浅色模式", on_click=lambda e: change_theme(e, ft.ThemeMode.LIGHT)),
@@ -1056,7 +1073,7 @@ def main(page):
         title=ft.Text('title'),
         actions=[
             control_adc_menu,
-            darkmode_selector,
+            control_darkmode_selector,
             ctrl_language_selector,
         ]
     )
@@ -1523,7 +1540,11 @@ def main(page):
         key="log_text",
         value="",
     )
-    control_log_scroll_column = ft.Column([control_log_text], scroll=ft.ScrollMode.ALWAYS, expand=True, width=500)
+    control_log_scroll_column = ft.Column([control_log_text], scroll=ft.ScrollMode.ALWAYS, expand=True, width=1000)
+    control_log_warning = ft.Switch(value=False, label_position=ft.LabelPosition.LEFT)
+    control_log_error = ft.Switch(value=False, label_position=ft.LabelPosition.LEFT)
+    control_log_error_warning_description = ft.Icon(name="help", tooltip=ft.Tooltip(''))
+    log_row = ft.Row([control_log_error_warning_description, control_log_warning, control_log_error], alignment=ft.MainAxisAlignment.CENTER)
     log_column = ft.Column(
         [
             ft.Column(
@@ -1532,6 +1553,7 @@ def main(page):
                     control_start_stop_refresh_container,
                     control_progress_text,
                     control_progress_bar,
+                    log_row,
                     control_clear_log_button
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER

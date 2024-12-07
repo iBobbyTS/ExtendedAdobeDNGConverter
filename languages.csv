@@ -112,3 +112,8 @@ hour,Hour,时
 minute,Minute,分
 second,Second,秒
 output_name_format_inserter_dropdown_13,Serial number counting from 100, fill to 4 digits,从100开始的序列数字，前面填充慢4位0
+log_error_warning_description,"Log error and warning produced by Adobe DNG Converter to the below area.\nRecommend to enable only when conversion is not success.\nADC produces a lot of GPU warnings that doesn't matter.\nBecause converting DNG doesn't use GPU. ",将Adobe DNG转换器产生的错误(Error)和警告(Warning)记录到下方文本框，建议仅在转换失败时开启。\nADC会产生很多与GPU有关的警告，但ADC并不会使用GPU进行转换。
+log_error_warning_description_windows_specific,"\nADC also produces a lot of errors, but the dng is converted as normal, reason is unknown for now",\nADC也会产生很多错误(Error)，但DNG会正常转换，具体原因未知。
+log_error,Log Error,记录错误
+log_warning,Log Warning,记录警告
+darkmode_description,"Dark/Light mode selection",深色/浅色模式选择
