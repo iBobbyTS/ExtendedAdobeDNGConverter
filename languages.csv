@@ -8,6 +8,9 @@ adc_website_button,Adobe DNG Converter Website,Adobe DNG 转换器官网
 download_adc_mac,Download directly,直接下载
 download_adc_windows_x64,Download x64 version,下载 x64 版
 download_adc_windows_arm,Download ARM version,下载 ARM 版
+tooltip_label,Tooltip,帮助信息
+general_tooltip_label,General,常规帮助信息
+disabled_tooltip_label,Disabled Controls,已禁用选项的帮助信息
 input_label,Input,输入
 open_file,Open file,打开文件
 or_text_label,or,或
@@ -18,7 +21,7 @@ uncompressed,Uncompressed,未压缩
 lossless,Lossless,无损压缩
 lossy,Lossy,有损压缩
 compression_algorithm_label,Compression algorithm,压缩算法
-compression_quality_label,compression quality,压缩质量
+compression_quality_label,Compression quality,压缩质量
 compression_quality_slider_left_text,High Quality,高质量
 compression_quality_slider_right_text,Low quality,低质量
 compression_effort_label,Compression effort,压缩率
@@ -27,7 +30,9 @@ compression_effort_slider_right_text,Slow,慢
 resize_label,Limit size,缩小
 none,None,无
 limit_input_by_side,Limit by long side,限制长边像素数
-limit_input_by_pixel_count,Limit by pixel count,限制像素数
+enter_side_length,Enter side length,输入长边像素
+limit_input_by_pixel_count,Limit by total pixel count,限制像素数
+enter_pixel_count,Enter total pixel count,输入总像素
 debayer_label,Debayer,解拜耳
 jpeg_preview_label,JPEG preview,JPEG 预览
 medium_size,Medium size,中等尺寸
@@ -44,8 +49,8 @@ compression_type_description,"Ps. bracket indicates an 16-bit 24MP RGB RAW image
 compression_algorithm_description,"Ps. bracket indicates an 16-bit 24MP RGB RAW image.\nJPEG(70-90M) doesn't support lossy compression, it's for old RAW processing software that doesn't support JXL, tryout JXL for smaller file size in both lossless(40-60M) and lossy(1-25M) compression",注：括号内是16位2400万像素RGB RAW照片的占用空间。\nJPEG(70-90M)不支持有损压缩，适用于不支持JXL的旧RAW处理软件；推荐使用JXL以获得更小的文件，同时支持无损（40-60M）和有损压缩（1-25M）。
 compression_quality_description,"Ps. bracket indicates an 16-bit 24MP RGB RAW image.\nADC's default is 1 (1-7M), 0.1 (15-25M) is my recommendation, it gives very high quality, 0 is lossless, please set to lossless(40-60M) with Compression type above.\nThis is the --distance parameter in libjxl",注：括号内是16位2400万像素RGB RAW照片的占用空间。\nADC的默认值是1（1-7M），0.1（15-25M）是我的推荐压缩质量，输出文件有非常高的画质，0是无损(40-60M)，请使用压缩类型来将图像设置为无损。\n这是libjxl中的--distance参数。
 compression_effort_description,"Ps. bracket indicates an 16-bit 24MP RGB RAW image.\n1(70-80M) is fast with larger output file size, 9(40-60M) is slow with smaller output file size. Does not affect image quality.\nThis is the --effort parameter in libjxl",注：括号内是16位2400万像素RGB RAW照片的占用空间。\n此选项不影响画质。\n1（70-80M）压缩很快，压缩完文件较大，9（40-60M）压缩较慢，压缩完文件较小。\n这是libjxl中的--effort参数。
-resize_description,Limit size is only supported in lossy compression.,缩小图像仅支持有损压缩。
-debayer_description,"Assuming you know what bayer and debayer means, otherwise leave it off.\nOnly applies to bayer image, even this option is off, it will not rebayer image if input is RGB(most raw-level noise reduction, hdr, panorama, etc. will debayer image).",假设您知道拜耳阵列和解拜耳，否则请关闭此选项。\n仅对拜耳图像有效，即使关闭此选项，如果输入是RGB，它也不会重组拜耳阵列（大部分RAW级别的降噪、包围曝光、全景接片都会先把图像解拜耳）。
+resize_description,"Limit size will resize the image if the target is smaller than the original image,it is not available in the following settings:\n- Uncompressed\n- JPEG\n- Bayer JXL\nAvailable in the following settings:\n- RGB JXL",缩小图像会在目标尺寸小于原始图像时缩小图像，以下参数搭配中不可用：\n- 未压缩\n- JPEG\n- 拜耳 JXL\n以下参数搭配中可用：\n- RGB JXL
+debayer_description,"Assuming you know what bayer and debayer means, otherwise leave it off.\nOnly applies to bayer image, even this option is off, it will not rebayer image if input is RGB.\nSome additional knowledge about debayer: most raw-level noise reduction, hdr, panorama, etc. will debayer image. debay won't cause any quality loss unless a better debayer algorithm is invented in the future. Dynamic range, the ability to adjust exposure and white balance losslessly are just like bayer RAW",假设您知道拜耳阵列和解拜耳，否则请关闭此选项。\n仅对拜耳图像有效，即使关闭此选项，如果输入是RGB，它也不会重组拜耳阵列。\n关于解拜耳的小知识：大多数RAW级别的降噪、HDR、全景拼接等都会将图像解拜耳。解拜耳不会导致任何质量损失，除非未来开发出了更好的解拜耳算法。动态范围、无损调整曝光和白平衡的和拜耳RAW并无二致。
 jpeg_preview_description,This is a preview of the image for non-raw processing software to display the image,JPEG预览让非RAW处理软件可以显示图像。
 fast_load_data_description,"This adds a smaller raw image to the output dng file, it helps raw processing software to render a low resolution image faster",在输出的DNG文件中添加一个低分辨率RAW图像，有助于RAW处理软件快速渲染出一个低分辨率图像。
 embed_original_raw_description,"This embeds the original RAW file into the output DNG file, you can extract the original RAW file with the official Adobe DNG Converter(not this one).",这会把原始RAW文件嵌入到输出的DNG文件中，您可以使用官方的Adobe DNG转换器提取原始RAW文件。
@@ -78,3 +83,32 @@ log_adobe_dng_converter_not_found,"This application is an alternative graphics i
 log_adobe_dng_converter_found,"This application is an alternative graphics interface of Adobe DNG Converter(ADC), it requires ADC to be installed on the system to work, if you have any problem converting, consider updating ADC first, click the button on top right of the window to open ADC website directly",这个软件是为Adobe DNG转换器(简称ADC)重新开发的图形界面，不能独立使用，需要先把ADC安装到默认路径（{dir}），如果您在转换时遇到任何问题，请先更新ADC，可以点击窗口右上角的按钮打开ADC网站
 log_adobe_dng_converter_still_not_found,"Adobe DNG Converter is still not found, please make sure it's installed to {dir}",Adobe DNG转换器仍未找到，请确保已安装到{dir}
 log_adobe_dng_converter_found_thank_you,"Adobe DNG Converter is found, you can now use this application",已找到Adobe DNG转换器，可以开始使用啦
+compression_type_lossless_disabled,Lossless is not available in the following settings:\n- Bayer JXL\nAvailable in the following settings:\n- Debayered JXL\n- JPEG,无损压缩在以下参数搭配中不可用：\n- 拜耳 JXL\n以下参数搭配中可用：\n- 已解拜耳的 JXL\n- JPEG
+compression_type_lossy_disabled,Lossy is not available in the following setting:\n - JPEG\nAvailable in the following settings:\n- JXL,有损压缩在以下参数搭配中不可用：\n- JPEG\n以下参数搭配中可用：\n- JXL
+compression_algorithm_jpeg_disabled,JPEG compression is not available in the following settings:\n- Lossy\nAvailable in the following settings:\n- Lossless,JPEG压缩在以下参数搭配中不可用：\n- 有损\n以下参数搭配中可用：\n- 无损
+debayer_disabled,Debayer is not available in the following settings:\n- Lossless JXL\nAvailable in the following settings:\n- Uncompressed\n- JPEG\n- Lossy JXL,解拜耳在以下参数搭配中不可用：\n- 无损 JXL\n以下参数搭配中可用：\n- 未压缩\n- JPEG\n- 有损 JXL
+preset_label,Preset,预设
+preset_custom,Custom,自定义
+preset_dialog_add_preset_label,Add Preset,添加预设
+preset_dialog_discard_button,Discard,取消
+preset_dialog_save_button,Save,保存
+include_subfolder_label,Include images contained within subfolders,包含子文件夹中的图像
+skip_existing_label,Skip source image if destination image already exists,如果目标文件已存在则跳过源文件
+same_as_input_label,Save in same location,保存在相同位置
+output_name_format_label,Output name,输出文件名
+output_name_format_inserter_label,Insert ...,填入...
+output_extension_label,Extension case,扩展名大小写
+original_file_name,Original file name,原始文件名
+original_file_name_lower_case,Original file name in lowercase,原始文件名小写
+output_name_format_inserter_dropdown_3,"Mth. DD, YYYY HH-MM-SS","YYYY年MM月DD日, 时-分-秒"
+output_name_format_inserter_dropdown_3_key,"%b. %d, %Y %H-%M-%S","%Y年%-m月%d日 %H-%M-%S"
+year,Year,年
+output_name_format_inserter_dropdown_5,Month (ex. January),月（例：January）
+output_name_format_inserter_dropdown_6,Month (ex. 01),月（例：01）
+output_name_format_inserter_dropdown_7,Month (ex. 1),月（例：1）
+output_name_format_inserter_dropdown_8,Mth (ex. Jan),月（例：Jan）
+day,Day,日
+hour,Hour,时
+minute,Minute,分
+second,Second,秒
+output_name_format_inserter_dropdown_13,Serial number counting from 100, fill to 4 digits,从100开始的序列数字，前面填充慢4位0
