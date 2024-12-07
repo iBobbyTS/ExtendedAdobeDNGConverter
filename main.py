@@ -160,17 +160,19 @@ def get_compression_parm_from_ui() -> dict:
     }
     return result
 
-
-def create_preset(name):
-    config['presets'][name] = get_compression_parm_from_ui()
-    config['presets'][name]['preset'] = name
-    save_persist("config.json", config)
-
-
-def delete_preset():
-    name = ''
+def delete_preset(e):
+    name = control_preset_selector.value
+    if name == 'custom':
+        return
+    for index, item in enumerate(control_preset_selector.options):
+        if item.text == name:
+            control_preset_selector.options.pop(index)
+            break
     config['presets'].pop(name, None)
+    config['preset'] = 'custom'
+    control_preset_selector.value = 'custom'
     save_persist("config.json", config)
+    e.page.update()
 
 
 def save_config():
@@ -812,8 +814,15 @@ def apply_config_to_ui(e, conf=None):
 
 def preset_save(e):
     name = control_preset_dialog_preset_name_input.value
-    create_preset(name)
-    control_preset_selector.options.append(ft.dropdown.Option(text=control_preset_dialog_preset_name_input.value))
+    control_preset_dialog_preset_name_input.value = ''
+    if name in config['presets']:
+        config['presets'][name].update(get_compression_parm_from_ui())
+        control_preset_selector.value = name
+    else:
+        config['presets'][name] = get_compression_parm_from_ui()
+        config['presets'][name]['preset'] = name
+        control_preset_selector.options.append(ft.dropdown.Option(text=control_preset_dialog_preset_name_input.value))
+    save_persist("config.json", config)
     control_preset_selector.value = name
     e.page.close(control_add_preset_dialog)
     e.page.update()
@@ -1268,7 +1277,7 @@ def main(page):
         options=[
             ft.dropdown.Option(key='custom'),
         ],
-        on_change=change_preset
+        on_change=change_preset,
     )
     control_preset_selector.value = 'custom'
     for preset in config['presets'].keys():
@@ -1304,6 +1313,10 @@ def main(page):
             ft.IconButton(
                 icon=ft.Icons.ADD,
                 on_click=lambda e: page.open(control_add_preset_dialog)
+            ),
+            ft.IconButton(
+                icon=ft.Icons.DELETE_FOREVER,
+                on_click=delete_preset
             )
         ])
     ])
