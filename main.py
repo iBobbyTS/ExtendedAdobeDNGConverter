@@ -854,7 +854,7 @@ def start_processing(e):
     args.append(dng_version_dict[dng_version])
     if parallel_processing:
         args.append('-mp')
-    files = os.walk(input_path)
+    files = list(os.walk(input_path))
     index_format_parm = re.findall(r"%\((\d+),(\d+)\)d", output_file_format)
     index_format = re.findall(r"%\(\d+,\d+\)d", output_file_format)
     if index_format:
@@ -869,6 +869,7 @@ def start_processing(e):
             if f.endswith(RAW_EXTENSIONS):
                 file_count += 1
     process_count = 0
+    print(files)
     for root, _, file_list in files:
         subfolder_name = root.removeprefix(input_path).removeprefix('/')
         output_folder = os.path.join(output_path, subfolder_name)
@@ -895,18 +896,28 @@ def start_processing(e):
             file_numbering_index += 1
             _ = args+['-d', output_folder, '-o', output_file_name, input_file]
             add_to_log(e, 'Processing '+output_file_name, True)
+            log = False
             process = subprocess.Popen(_, stderr=subprocess.PIPE, text=True, shell=False)
             for line in process.stderr:
-                if line.startswith('***') and line.endswith('***'):
+                if line.startswith('***') and line.endswith('***\n'):
                     if control_log_error.value and 'Error' in line:
+                        log = True
                         add_to_log(e, line, False)
                         control_log_text.page.update()
                     elif control_log_warning.value and 'Warning' in line:
+                        log = True
                         add_to_log(e, line, False)
                         control_log_text.page.update()
                 else:
+                    log = True
                     add_to_log(e, line, True)
                     control_log_text.page.update()
+            if log:
+                control_log_text.value = control_log_text.value.removesuffix('\n') + '\nDone processing ' + output_file_name + '\n\n'
+            else:
+                control_log_text.value = control_log_text.value.removesuffix('\n')+', Done.\n\n'
+            control_log_scroll_column.scroll_to(-1)
+            e.page.update()
             process_count += 1
             control_progress_text.value = f'{process_count}/{file_count}'
             control_progress_bar.value = process_count/file_count
