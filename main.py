@@ -9,15 +9,16 @@ import webbrowser
 
 import flet as ft
 
-
-if os.name == 'nt':  # Windows
+sys_win = os.name == 'nt'
+if sys_win:  # Windows
     persist_dir = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Extended Adobee DNG Converter")
-    adc_dir_prompt = adc_dir = r"C:\Program Files\Adobe DNG Converter.exe"
+    adc_dir_prompt = adc_dir = r"C:\Program Files\Adobe\Adobe DNG Converter\Adobe DNG Converter.exe"
+    exiftool_path = 'exiftool/windows/exiftool.exe'
 else:  # macOS/Linux
     persist_dir = os.path.join(os.path.expanduser("~"), ".config", "Extended_Adobee_DNG_Converter")
     adc_dir = "/Applications/Adobe DNG Converter.app/Contents/MacOS/Adobe DNG Converter"
     adc_dir_prompt = "/Applications/Adobe DNG Converter.app"
-exiftool_path = 'bin/exiftool'
+    exiftool_path = 'exiftool/macos/exiftool'
 
 RAW_EXTENSIONS = (
     'dng',  # Apple, Casio, DJI, DxO, Google, GoPro, Hasselblad, Huawei, Leica, LG, Light, Motorola, Nokia, OnePlus, OPPO, Parrot, Pentax, Pixii, Ricoh, Samsung, Sigma, Skydio, Sony, Xiaomi, Yuneec, Zeiss
@@ -70,6 +71,7 @@ else:
         # IO
         'last_input': '',
         'last_output': '',
+        'include_subfolder_checkbox': False,
         # Tooltip
         'general_tooltip': True,
         'disabled_tooltip': True,
@@ -196,9 +198,12 @@ def update_language(page):
     # AppBar
     ctrl_language_selector.tooltip.message = lang['language_description']
     control_adc_website_button.text = lang['adc_website_button']
-    if os.name == 'nt':
-        control_adc_menu.items[1].text = lang['download_adc_windows_x64']
-        control_adc_menu.items[2].text = lang['download_adc_windows_arm']
+    if sys_win:
+        import platform
+        if 'ARM' in platform.machine().upper():
+            control_adc_menu.items[1].text = lang['download_adc_windows_arm']
+        else:
+            control_adc_menu.items[1].text = lang['download_adc_windows_x64']
     else:
         control_adc_menu.items[1].text = lang['download_adc_mac']
     # 控件
@@ -221,7 +226,7 @@ def update_language(page):
     control_output_name_format_inserter_dropdown.options[1].text = lang["original_file_name_lower_case"]
     control_output_name_format_inserter_dropdown.options[3].text = lang["output_name_format_inserter_dropdown_3"]
     _ = lang["output_name_format_inserter_dropdown_3_key"]
-    if os.name == 'nt':
+    if sys_win:
         _ = _.replace('%-m', '%#m')
     control_output_name_format_inserter_dropdown.options[3].key = _
     control_output_name_format_inserter_dropdown.options[4].text = lang["year"]
@@ -340,7 +345,7 @@ def change_language(e, language):
 
 
 # def locate_adc_on_click(e):
-#     if os.name == 'nt':
+#     if sys_win:
 #         control_adc_selector.pick_files(
 #             dialog_title=LANGUAGES[current_language]['please_select'] + 'Adobe DNG Converter.exe'
 #         )
@@ -778,7 +783,7 @@ def change_preset(e):
 
 def get_capture_time_of_raw_file(file_path):
     global process
-    process = subprocess.Popen(['exiftool', '-DateTimeOriginal', '-s3', file_path], stdout=subprocess.PIPE)
+    process = subprocess.Popen([exiftool_path, '-DateTimeOriginal', '-s3', file_path], stdout=subprocess.PIPE)
     out, _ = process.communicate()
     return datetime.datetime.strptime(out.decode('utf-8').strip(), '%Y:%m:%d %H:%M:%S')
 
@@ -795,6 +800,8 @@ def start_processing(e):
     skip_existing = control_skip_existing_checkbox.value
     output_path = control_output_folder_text.value
     output_file_format = control_output_name_format_input.value
+    if output_file_format == '':
+        output_file_format = '%F'
     ext = control_output_extension_radio.value
     # 获取压缩参数
     compression_type = control_compression_type_selector.value
@@ -855,6 +862,7 @@ def start_processing(e):
     for root, _, file_list in files:
         subfolder_name = root.removeprefix(input_path).removeprefix('/')
         output_folder = os.path.join(output_path, subfolder_name)
+        output_folder = output_folder.removesuffix('/').removeprefix('\\')
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
         for file in file_list:
@@ -879,7 +887,10 @@ def start_processing(e):
             add_to_log(e, 'Processing '+output_file_name, True)
             process = subprocess.Popen(_, stderr=subprocess.PIPE, text=True, shell=False)
             for line in process.stderr:
-                if "GPU Warning: Special file 'TempDisableGPU" not in line:
+                if line.startswith('***') and line.endswith('***'):
+                    add_to_log(e, line, True)
+                    control_log_text.page.update()
+                else:
                     add_to_log(e, line, True)
                     control_log_text.page.update()
         if break_process:
@@ -1003,7 +1014,7 @@ def main(page):
     # 顶部App Bar
     # 语言选择
     ctrl_language_selector = ft.PopupMenuButton(
-        icon=ft.icons.LANGUAGE,
+        icon=ft.Icons.LANGUAGE,
         items=[
                 ft.PopupMenuItem(text="简体中文", data="lang-zh-cn", on_click=lambda e: change_language(e, "lang-zh-cn")),
                 ft.PopupMenuItem(text="English", data="lang-en", on_click=lambda e: change_language(e, "lang-en")),
@@ -1033,7 +1044,7 @@ def main(page):
     )
     # 深色模式
     darkmode_selector = ft.PopupMenuButton(
-        icon=ft.icons.DARK_MODE_OUTLINED,
+        icon=ft.Icons.DARK_MODE_OUTLINED,
         items=[
             ft.PopupMenuItem(text="浅色模式", on_click=lambda e: change_theme(e, ft.ThemeMode.LIGHT)),
             ft.PopupMenuItem(text="深色模式", on_click=lambda e: change_theme(e, ft.ThemeMode.DARK)),
@@ -1129,7 +1140,7 @@ def main(page):
             ft.dropdown.Option(key='%Y'),
             ft.dropdown.Option(key='%B'),
             ft.dropdown.Option(key='%m'),
-            ft.dropdown.Option(key='%#m' if os.name == 'nt' else '%-m'),
+            ft.dropdown.Option(key='%#m' if sys_win else '%-m'),
             ft.dropdown.Option(key='%b'),
             ft.dropdown.Option(key='%d'),
             ft.dropdown.Option(key='%H'),
@@ -1192,11 +1203,11 @@ def main(page):
     control_preset_dialog_add_preset_label = ft.Text()
     control_preset_dialog_preset_name_input = ft.TextField()
     control_preset_dialog_discard_button = ft.IconButton(
-        icon=ft.icons.CLOSE,
+        icon=ft.Icons.CLOSE,
         on_click=lambda e: page.close(control_add_preset_dialog)
     )
     control_preset_dialog_save_button = ft.IconButton(
-        icon=ft.icons.CHECK,
+        icon=ft.Icons.CHECK,
         on_click=preset_save
     )
     control_add_preset_dialog = ft.AlertDialog(
@@ -1217,7 +1228,7 @@ def main(page):
         ft.Row([
             control_preset_selector,
             ft.IconButton(
-                icon=ft.icons.ADD,
+                icon=ft.Icons.ADD,
                 on_click=lambda e: page.open(control_add_preset_dialog)
             )
         ])
