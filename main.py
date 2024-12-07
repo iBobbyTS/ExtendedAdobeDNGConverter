@@ -636,8 +636,25 @@ def compression_quality_slider_change(e):
     control_compression_quality_input.value = str(round(current_value, 1))
     e.page.update()
 
-
 def compression_quality_input_change(e):
+    set_preset_to_custom()
+    e.page.update()
+    ecv = e.control.value
+    if ecv == '':
+        return
+    try:
+        value = float(ecv)
+        if value < 0.1:
+            value = 0.1
+        elif value > 6:
+            value = 6
+        control_compression_quality_slider.value = value
+        e.page.update()
+    except Exception as e:
+        print(e)
+
+
+def compression_quality_input_submit(e):
     set_preset_to_custom()
     if log_count:
         add_to_log(e, '')
@@ -647,12 +664,14 @@ def compression_quality_input_change(e):
         return
     try:
         value = float(ecv)
-        if value < 0:
+        if value < 0.1:
             add_to_log(e, lang["log_set_quality_to_0"])
-            value = 0
+            value = 0.1
+            e.control.value = '0.1'
         elif value > 6:
             add_to_log(e, lang["log_set_quality_to_6"])
             value = 6
+            e.control.value = '6'
     except ValueError:
         add_to_log(e, lang["log_quality_value_error"].format(ecv=ecv))
         value = 0.1
@@ -677,11 +696,32 @@ def compression_effort_input_change(e):
     try:
         value = int(ecv)
         if value < 1:
+            value = 1
+            e.control.value = '1'
+        elif value > 9:
+            value = 9
+            e.control.value = '9'
+        control_compression_effort_slider.value = value
+        e.page.update()
+    except Exception as e:
+        print(e)
+
+
+def compression_effort_input_submit(e):
+    set_preset_to_custom()
+    ecv = e.control.value
+    if ecv == '':
+        return
+    try:
+        value = int(ecv)
+        if value < 1:
             add_to_log(e, lang["log_set_effort_to_1"])
             value = 1
+            e.control.value = '1'
         elif value > 9:
             add_to_log(e, lang["log_set_effort_to_9"])
             value = 9
+            e.control.value = '9'
     except ValueError:
         add_to_log(e, lang["log_effort_value_error"].format(ecv=ecv))
         value = 9
@@ -793,7 +833,7 @@ def get_capture_time_of_raw_file(file_path):
 
 
 def start_processing(e):
-    global process, break_process
+    global process, break_process, log
     break_process = False
     control_start_button.visible = False
     control_stop_button.visible = True
@@ -869,7 +909,10 @@ def start_processing(e):
             if f.endswith(RAW_EXTENSIONS):
                 file_count += 1
     process_count = 0
-    print(files)
+    control_log_text.value = control_log_text.value + '\n'
+    control_progress_text.value = f'0/{file_count}'
+    control_progress_bar.value = 0
+    e.page.update()
     for root, _, file_list in files:
         subfolder_name = root.removeprefix(input_path).removeprefix('/')
         output_folder = os.path.join(output_path, subfolder_name)
@@ -895,7 +938,7 @@ def start_processing(e):
                 continue
             file_numbering_index += 1
             _ = args+['-d', output_folder, '-o', output_file_name, input_file]
-            add_to_log(e, 'Processing '+output_file_name, True)
+            add_to_log(e, output_file_name, True)
             log = False
             process = subprocess.Popen(_, stderr=subprocess.PIPE, text=True, shell=False)
             for line in process.stderr:
@@ -912,15 +955,16 @@ def start_processing(e):
                     log = True
                     add_to_log(e, line, True)
                     control_log_text.page.update()
-            if log:
-                control_log_text.value = control_log_text.value.removesuffix('\n') + '\nDone processing ' + output_file_name + '\n\n'
-            else:
-                control_log_text.value = control_log_text.value.removesuffix('\n')+', Done.\n\n'
-            control_log_scroll_column.scroll_to(-1)
+            if not break_process:
+                if log:
+                    control_log_text.value = control_log_text.value.removesuffix('\n') + f'\n{output_file_name} - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n\n'
+                else:
+                    control_log_text.value = control_log_text.value.removesuffix('\n')+f' - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n\n'
+                control_log_scroll_column.scroll_to(-1)
+                process_count += 1
+                control_progress_text.value = f'{process_count}/{file_count}'
+                control_progress_bar.value = process_count/file_count
             e.page.update()
-            process_count += 1
-            control_progress_text.value = f'{process_count}/{file_count}'
-            control_progress_bar.value = process_count/file_count
         if break_process:
             break_process = False
             break
@@ -945,7 +989,9 @@ def stop_processing(e):
 
 
 def clear_log(e):
+    global log
     control_log_text.value = ""
+    log = True
     e.page.update()
 
 
@@ -1304,7 +1350,8 @@ def main(page):
     control_compression_quality_input = ft.TextField(
             keyboard_type=ft.KeyboardType.NUMBER,
             border=ft.InputBorder.NONE,
-            on_change=compression_quality_input_change
+            on_change=compression_quality_input_change,
+            on_submit=compression_quality_input_submit,
         )
     control_compression_quality_slider = ft.Slider(
         min=0.1,
@@ -1336,7 +1383,8 @@ def main(page):
         value='9',
         keyboard_type=ft.KeyboardType.NUMBER,
         border=ft.InputBorder.NONE,
-        on_change=compression_effort_input_change
+        on_change=compression_effort_input_change,
+        on_submit=compression_effort_input_submit
     )
     control_compression_effort_slider = ft.Slider(
         min=1,
