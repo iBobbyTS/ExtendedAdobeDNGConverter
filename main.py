@@ -975,10 +975,13 @@ def start_processing(e):
                 control_progress_bar.value = process_count/file_count
             e.page.update()
         if break_process:
-            break_process = False
             break
         if not include_subfolder:
             break
+    if not break_process:
+        add_to_log(e, f'{input_path} is done converting.', True)
+    else:
+        break_process = False
     control_stop_button.visible = False
     control_start_button.visible = True
     e.page.update()
