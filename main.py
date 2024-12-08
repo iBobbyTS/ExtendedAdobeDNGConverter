@@ -968,7 +968,7 @@ def start_processing(e):
                 if log:
                     control_log_text.value = control_log_text.value.removesuffix('\n') + f'\n{output_file_name} - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n\n'
                 else:
-                    control_log_text.value = control_log_text.value.removesuffix('\n')+f' - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n\n'
+                    control_log_text.value = control_log_text.value.removesuffix('\n')+f' - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n'
                 control_log_scroll_column.scroll_to(-1)
                 process_count += 1
                 control_progress_text.value = f'{process_count}/{file_count}'
