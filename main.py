@@ -23,11 +23,11 @@ def resource_path(relative_path):
 
 sys_win = os.name == 'nt'
 if sys_win:  # Windows
-    persist_dir = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Extended Adobee DNG Converter")
+    persist_dir = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Extended Adobe DNG Converter")
     adc_dir_prompt = adc_dir = r"C:\Program Files\Adobe\Adobe DNG Converter\Adobe DNG Converter.exe"
     exiftool_path = resource_path('exiftool/windows/exiftool.exe')
 else:  # macOS/Linux
-    persist_dir = os.path.join(os.path.expanduser("~"), ".config", "Extended_Adobee_DNG_Converter")
+    persist_dir = os.path.join(os.path.expanduser("~"), ".config", "Extended_Adobe_DNG_Converter")
     adc_dir = "/Applications/Adobe DNG Converter.app/Contents/MacOS/Adobe DNG Converter"
     adc_dir_prompt = "/Applications/Adobe DNG Converter.app"
     exiftool_path = resource_path('exiftool/macos/exiftool')
