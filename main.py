@@ -1,3 +1,4 @@
+print(1)
 import datetime
 import os
 import shutil
@@ -8,8 +9,9 @@ import csv
 import re
 import subprocess
 import webbrowser
-
+print(2)
 import flet as ft
+print(3)
 
 
 def resource_path(relative_path):
@@ -75,11 +77,13 @@ def save_persist(file_name, data):
 
 # 读取/创建配置文件
 if not os.path.exists(os.path.join(persist_dir, "config.json")):
+    os.makedirs(persist_dir, exist_ok=True)
     shutil.copy(resource_path("config.json"), persist_dir)
 config = load_persist("config.json")
 
 
 # 初始化默认语言
+print(config)
 current_language = config['language']
 # 读取语言包
 language_csv_path = resource_path('languages.csv')
