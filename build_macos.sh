@@ -1,3 +1,4 @@
+pip install pyinstaller
 flet pack main.py \
   --add-data "config.json:." \
   --add-data "languages.csv:." \
