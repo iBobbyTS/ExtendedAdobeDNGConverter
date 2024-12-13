@@ -1,5 +1,7 @@
 import datetime
 import os
+import shutil
+import sys
 import platform
 import json
 import csv
@@ -9,16 +11,26 @@ import webbrowser
 
 import flet as ft
 
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        # 打包后文件所在目录
+        return os.path.join(sys._MEIPASS, relative_path)
+    else:
+        # 开发环境文件所在目录
+        return os.path.join(os.path.abspath("."), relative_path)
+
+
 sys_win = os.name == 'nt'
 if sys_win:  # Windows
     persist_dir = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Extended Adobee DNG Converter")
     adc_dir_prompt = adc_dir = r"C:\Program Files\Adobe\Adobe DNG Converter\Adobe DNG Converter.exe"
-    exiftool_path = 'exiftool/windows/exiftool.exe'
+    exiftool_path = resource_path('exiftool/windows/exiftool.exe')
 else:  # macOS/Linux
     persist_dir = os.path.join(os.path.expanduser("~"), ".config", "Extended_Adobee_DNG_Converter")
     adc_dir = "/Applications/Adobe DNG Converter.app/Contents/MacOS/Adobe DNG Converter"
     adc_dir_prompt = "/Applications/Adobe DNG Converter.app"
-    exiftool_path = 'exiftool/macos/exiftool'
+    exiftool_path = resource_path('exiftool/macos/exiftool')
 
 RAW_EXTENSIONS = (
     'dng',  # Apple, Casio, DJI, DxO, Google, GoPro, Hasselblad, Huawei, Leica, LG, Light, Motorola, Nokia, OnePlus, OPPO, Parrot, Pentax, Pixii, Ricoh, Samsung, Sigma, Skydio, Sony, Xiaomi, Yuneec, Zeiss
@@ -62,44 +74,17 @@ def save_persist(file_name, data):
 
 
 # 读取/创建配置文件
-if os.path.exists(os.path.join(persist_dir, "config.json")):
-    config = load_persist("config.json")
-else:
-    config = {
-        # 设置
-        'language': 'lang-en',
-        # IO
-        'last_input': '',
-        'last_output': '',
-        'include_subfolder_checkbox': False,
-        # Tooltip
-        'general_tooltip': True,
-        'disabled_tooltip': True,
-        # 参数
-        'compression_type': 'lossy',
-        'compression_algorithm': 'jxl',
-        'compression_quality': 0.1,
-        'compression_effort': 9,
-        'resize': 'none',
-        'limit_input_by_side': '0',
-        'limit_input_by_pixel_count': '0',
-        'debayer': True,
-        'jpeg_preview': 'none',
-        'fast_load_data': False,
-        'embed_original_raw': False,
-        'camera_raw_compatibility': '15.3',
-        'dng_version': '1.7',
-        'parallel_processing': False,
-        'preset': 'custom',
-        'presets': {}
-    }
+if not os.path.exists(os.path.join(persist_dir, "config.json")):
+    shutil.copy(resource_path("config.json"), persist_dir)
+config = load_persist("config.json")
 
 
 # 初始化默认语言
 current_language = config['language']
 # 读取语言包
+language_csv_path = resource_path('languages.csv')
 LANGUAGES = {}
-with open('languages.csv', 'r', encoding='utf-8') as f:
+with open(language_csv_path, 'r', encoding='utf-8') as f:
     reader = csv.reader(f)
     keys = next(reader)[1:]
     for i in keys:
@@ -821,7 +806,7 @@ def preset_save(e):
     else:
         config['presets'][name] = get_compression_parm_from_ui()
         config['presets'][name]['preset'] = name
-        control_preset_selector.options.append(ft.dropdown.Option(text=control_preset_dialog_preset_name_input.value))
+        control_preset_selector.options.append(ft.dropdown.Option(text=name))
     save_persist("config.json", config)
     control_preset_selector.value = name
     e.page.close(control_add_preset_dialog)
