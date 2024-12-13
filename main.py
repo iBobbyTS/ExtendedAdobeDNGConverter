@@ -1,4 +1,3 @@
-print(1)
 import datetime
 import os
 import shutil
@@ -8,9 +7,7 @@ import json
 import csv
 import re
 import subprocess
-print(2)
 import flet as ft
-print(3)
 
 
 def resource_path(relative_path):
@@ -1216,8 +1213,8 @@ def main(page):
     control_output_name_format_inserter_label = ft.Text()
     control_output_name_format_inserter_dropdown = ft.Dropdown(
         options=[
-            ft.dropdown.Option(key='%F)'),
-            ft.dropdown.Option(key='%f)'),
+            ft.dropdown.Option(key='%F'),
+            ft.dropdown.Option(key='%f'),
             ft.dropdown.Option(key='%Y-%m-%d-%H%M%S', text='YYYY-MM-DD-HHMMSS'),
             ft.dropdown.Option(key='%b. %d, %Y %H-%M-%S'),
             ft.dropdown.Option(key='%Y'),
