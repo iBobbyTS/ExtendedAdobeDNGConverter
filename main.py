@@ -8,7 +8,6 @@ import json
 import csv
 import re
 import subprocess
-import webbrowser
 print(2)
 import flet as ft
 print(3)
@@ -73,6 +72,13 @@ def save_persist(file_name, data):
     file_dir = os.path.join(persist_dir, file_name)
     with open(file_dir, "w") as f:
         json.dump(data, f)
+
+
+def open_url(url):
+    if sys_win:
+        os.system(f'start {url}')
+    else:
+        os.system(f'open {url}')
 
 
 # 读取/创建配置文件
@@ -1099,7 +1105,7 @@ def main(page):
         tooltip=ft.Tooltip(''),
     )
     control_adc_website_button = ft.PopupMenuItem(
-        on_click=lambda e: webbrowser.open('https://helpx.adobe.com/ca/camera-raw/using/adobe-dng-converter.html')
+        on_click=lambda e: open_url('https://helpx.adobe.com/ca/camera-raw/using/adobe-dng-converter.html')
     )
     system = platform.system()
     if system == 'Windows':
@@ -1115,7 +1121,7 @@ def main(page):
         content=ft.Text('Adobe DNG Converter'),
         items=[
             control_adc_website_button,
-            ft.PopupMenuItem(on_click=lambda e: webbrowser.open(download_link))
+            ft.PopupMenuItem(on_click=lambda e: open_url(download_link))
         ],
         tooltip=ft.Tooltip(''),
     )
