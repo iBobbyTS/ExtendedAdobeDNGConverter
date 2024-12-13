@@ -933,6 +933,7 @@ def start_processing(e):
                 break
             if not file.lower().endswith(RAW_EXTENSIONS):
                 continue
+            start_time = datetime.datetime.now()
             input_file = os.path.join(root, file)
             name, _ = os.path.splitext(file)
             output_file_name = output_file_format.replace('%F', name).replace('%f', name.lower())
@@ -965,10 +966,12 @@ def start_processing(e):
                     add_to_log(e, line, True)
                     control_log_text.page.update()
             if not break_process:
+                end_time = datetime.datetime.now()
+                time_spent_second = (end_time - start_time).total_seconds()
                 if log:
-                    control_log_text.value = control_log_text.value.removesuffix('\n') + f'\n{output_file_name} - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n\n'
+                    control_log_text.value = control_log_text.value.removesuffix('\n') + f'\n{output_file_name} - {time_spent_second}s - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n\n'
                 else:
-                    control_log_text.value = control_log_text.value.removesuffix('\n')+f' - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n'
+                    control_log_text.value = control_log_text.value.removesuffix('\n')+f' - {time_spent_second}s - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n'
                 control_log_scroll_column.scroll_to(-1)
                 process_count += 1
                 control_progress_text.value = f'{process_count}/{file_count}'
