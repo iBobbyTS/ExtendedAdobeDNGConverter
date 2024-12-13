@@ -897,7 +897,13 @@ def start_processing(e):
     args.append(dng_version_dict[dng_version])
     if parallel_processing:
         args.append('-mp')
-    files = list(os.walk(input_path))
+    if input_path[0] == '[':
+        files = []
+        for f in json.loads(input_path):
+            folder, file = os.path.split(f)
+            files.append((folder, [], [file]))
+    else:
+        files = list(os.walk(input_path))
     index_format_parm = re.findall(r"%\((\d+),(\d+)\)d", output_file_format)
     index_format = re.findall(r"%\(\d+,\d+\)d", output_file_format)
     if index_format:
@@ -909,7 +915,7 @@ def start_processing(e):
     file_count = 0
     for root, _, file_list in files:
         for f in file_list:
-            if f.endswith(RAW_EXTENSIONS):
+            if f.lower().endswith(RAW_EXTENSIONS):
                 file_count += 1
     process_count = 0
     control_log_text.value = control_log_text.value + '\n'
@@ -925,7 +931,7 @@ def start_processing(e):
         for file in file_list:
             if break_process:
                 break
-            if not file.endswith(RAW_EXTENSIONS):
+            if not file.lower().endswith(RAW_EXTENSIONS):
                 continue
             input_file = os.path.join(root, file)
             name, _ = os.path.splitext(file)
