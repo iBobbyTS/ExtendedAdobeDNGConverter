@@ -76,6 +76,8 @@ def save_persist(file_name, data):
 
 
 # 读取/创建配置文件
+if os.path.isfile(persist_dir):
+    os.remove(persist_dir)  # Fix error caused by previous build
 if not os.path.exists(os.path.join(persist_dir, "config.json")):
     os.makedirs(persist_dir, exist_ok=True)
     shutil.copy(resource_path("config.json"), persist_dir)
