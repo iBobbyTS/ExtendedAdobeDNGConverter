@@ -953,17 +953,20 @@ def start_processing(e):
                 if log:
                     control_log_text.value = control_log_text.value.removesuffix('\n') + f'\n{output_file_name} - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n\n'
                 else:
-                    control_log_text.value = control_log_text.value.removesuffix('\n')+f' - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n\n'
+                    control_log_text.value = control_log_text.value.removesuffix('\n')+f' - {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n'
                 control_log_scroll_column.scroll_to(-1)
                 process_count += 1
                 control_progress_text.value = f'{process_count}/{file_count}'
                 control_progress_bar.value = process_count/file_count
             e.page.update()
         if break_process:
-            break_process = False
             break
         if not include_subfolder:
             break
+    if not break_process:
+        add_to_log(e, f'{input_path} is done converting.', True)
+    else:
+        break_process = False
     control_stop_button.visible = False
     control_start_button.visible = True
     e.page.update()
