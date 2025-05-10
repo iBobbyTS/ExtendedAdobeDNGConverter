@@ -832,7 +832,11 @@ def get_capture_time_of_raw_file(file_path):
     global process
     process = subprocess.Popen([exiftool_path, '-DateTimeOriginal', '-s3', file_path], stdout=subprocess.PIPE)
     out, _ = process.communicate()
-    return datetime.datetime.strptime(out.decode('utf-8').strip(), '%Y:%m:%d %H:%M:%S')
+    try:
+        d = datetime.datetime.strptime(out.decode('utf-8').strip(), '%Y:%m:%d %H:%M:%S')
+    except ValueError:
+        return None
+    return d
 
 
 def start_processing(e):
@@ -940,7 +944,8 @@ def start_processing(e):
             if index_format:
                 output_file_name = output_file_name.replace(index_format, f'{file_numbering_index:0{index_format_parm[0]}d}')
             input_file_capture_time = get_capture_time_of_raw_file(input_file)
-            output_file_name = input_file_capture_time.strftime(output_file_name)
+            if input_file_capture_time is not None:
+                output_file_name = input_file_capture_time.strftime(output_file_name)
             output_file_name = output_file_name + ext
             output_file_path = os.path.join(output_folder, output_file_name)
             if os.path.exists(output_file_path) and skip_existing:
