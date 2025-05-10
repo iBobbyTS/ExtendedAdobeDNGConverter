@@ -15,7 +15,7 @@
 ---
 
 ## 📷 Screenshots
-![Extended Adobe DNG Converter](/img/full_controls.png)
+![Extended Adobe DNG Converter](/img/full_controls.jpg)
 
 Multiple Language Support
 ![multiple language support](/img/2_language.jpg)
