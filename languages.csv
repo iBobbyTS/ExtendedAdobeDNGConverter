@@ -39,7 +39,7 @@ medium_size,Medium size,中等尺寸
 full_size,Full size,全尺寸
 fast_load_data_label,Fast load data,快速加载数据
 embed_original_raw_label,Embed original RAW,嵌入原始RAW
-camera_raw_compatibility_label,Camera RAW compatibility,相机RAW兼容性
+camera_raw_compatibility_label,Camera RAW compatibility,Camera RAW兼容性
 dng_version_label,DNG version,DNG 版本
 parallel_processing_label,Parallel processing,并行处理
 clear_log_button,Clear log,清除日志
